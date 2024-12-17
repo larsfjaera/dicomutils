@@ -14,7 +14,7 @@ if hasattr(dicom, 'config'):
 
 def get_uid(name):
     # print("{" + "\n".join("{}: {}".format(k, v) for k, v in dicom.UID.UID_dictionary.items()) + "}")
-    return [k for k, v in UID_dictionary.iteritems() if v[0] == name][0]
+    return [k for k, v in UID_dictionary.items() if v[0] == name][0]
 
 
 def generate_uid(_uuid=None):
@@ -38,7 +38,7 @@ def get_empty_dataset(filename, storagesopclass, sopinstanceuid):
     file_meta.MediaStorageSOPInstanceUID = sopinstanceuid
     file_meta.ImplementationClassUID = ImplementationClassUID
     file_meta.TransferSyntaxUID = dicom.uid.ImplicitVRLittleEndian
-    ds = dicom.dataset.FileDataset(filename, {}, file_meta=file_meta, preamble="\0"*128)
+    ds = dicom.dataset.FileDataset(filename, {}, file_meta=file_meta, preamble=b"\0"*128)
     return ds
 
 
@@ -225,7 +225,7 @@ def get_sop_common_module(ds, DT, TM, modality, sopinstanceuid):
 
 def get_ct_image_module(ds, rescale_slope=1.0, rescale_intercept=-1024.0):
     # Type 1
-    ds.ImageType = "ORIGINAL\SECONDARY\AXIAL"
+    ds.ImageType = "ORIGINAL\\SECONDARY\\AXIAL"
     ds.SamplesPerPixel = 1
     ds.PhotometricInterpretation = "MONOCHROME2"
     ds.BitsAllocated = 16
@@ -240,7 +240,7 @@ def get_ct_image_module(ds, rescale_slope=1.0, rescale_intercept=-1024.0):
 
 def get_mr_image_module(ds):
     # Type 1
-    ds.ImageType = "ORIGINAL\SECONDARY\OTHER"
+    ds.ImageType = "ORIGINAL\\SECONDARY\\OTHER"
     ds.SamplesPerPixel = 1
     ds.PhotometricInterpretation = "MONOCHROME2"
     ds.BitsAllocated = 16
@@ -259,7 +259,7 @@ def get_mr_image_module(ds):
 def get_pet_image_module(ds, image_index, rescale_slope):
     """C.8.9.4"""
     # Type 1
-    ds.ImageType = "ORIGINAL\PRIMARY"
+    ds.ImageType = "ORIGINAL\\PRIMARY"
     ds.SamplesPerPixel = 1
     ds.PhotometricInterpretation = "MONOCHROME2"
     ds.BitsAllocated = 16
@@ -322,7 +322,7 @@ def get_general_series_module(ds, DT, TM, modality):
     # ['CT', 'MR', 'Enhanced CT', 'Enhanced MR Image', 'Enhanced Color MR Image', 'MR Spectroscopy'].
     # May not be present if Patient Orientation Code Sequence is present.
     # ds.PatientPosition = "HFS"
-    if modality is 'MR' or modality is 'PT':
+    if modality == 'MR' or modality == 'PT':
         ds.Laterality = 'R'
 
     # Type 3
@@ -335,11 +335,11 @@ def get_pet_series_module(ds, number_of_slices):
     # Type 1
     ds.Units = 'BQML'  # Units (0054, 1001)
     ds.CountsSource = 'EMISSION'  # Counts Source (0054, 1002)
-    ds.SeriesType = 'STATIC\IMAGE'  # Series Type (0054,1000)
+    ds.SeriesType = 'STATIC\\IMAGE'  # Series Type (0054,1000)
     ds.NumberOfSlices = number_of_slices  # Number of Slices (0054,0081)
     ds.DecayCorrection = 'START'
     # Type 2
-    ds.CorrectedImage = 'DECY\ATTN\SCAT\DTIM\RAN\DCAL\NORM'  # Corrected Image (0028,0051)
+    ds.CorrectedImage = 'DECY\\ATTN\\SCAT\\DTIM\\RAN\\DCAL\\NORM'  # Corrected Image (0028,0051)
     ds.CollimatorType = 'NONE'  # Collimator Type (0018,1181)
 
 
@@ -753,7 +753,7 @@ def conform_mlc_to_roi(beam, roi, current_study):
             c = Mdb * vertices
             # Negation here since everything is at z < 0 in the b system, and that rotates by 180 degrees
             c2 = -np.array([float(beam.SourceAxisDistance)*c[mlcidx[0],:]/c[2,:], float(beam.SourceAxisDistance)*c[mlcidx[1],:]/c[2,:]]).squeeze()
-            vs = zip(list(c2[0]), list(c2[1]))
+            vs = list(zip(list(c2[0]), list(c2[1])))
             for v1,v2 in zip(vs[:-1], vs[1:]):
                 open_mlc_for_line_segment(bld[mlcdir].LeafPositionBoundaries, lp, v1, v2)
             open_mlc_for_line_segment(bld[mlcdir].LeafPositionBoundaries, lp, vs[-1], vs[0])
@@ -1128,7 +1128,7 @@ def build_rt_plan(current_study, isocenter, structure_set=None, **kwargs):
     rp.SeriesInstanceUID = seriesuid
     rp.StudyInstanceUID = studyuid
     rp.FrameOfReferenceUID = FoRuid
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
         if v != None:
             setattr(rp, k, v)
     return rp
@@ -1154,7 +1154,7 @@ def build_rt_dose(dose_data, voxel_size, center, current_study, rtplan, dose_gri
                                center[2]-(nVoxels[2]-1)*voxel_size[2]/2.0 + z*voxel_size[2]]
 
     rd.PixelData=dose_data.tostring(order='F')
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
         if v != None:
             setattr(rd, k, v)
     return rd
@@ -1166,7 +1166,7 @@ def build_rt_structure_set(ref_images, current_study, **kwargs):
     rs = get_default_rt_structure_set_dataset(ref_images, current_study)
     rs.SeriesInstanceUID = seriesuid
     rs.StudyInstanceUID = studyuid
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
         if v != None:
             setattr(rs, k, v)
     return rs
@@ -1200,7 +1200,7 @@ def build_ct(ct_data, pixel_representation, rescale_slope, rescale_intercept, vo
         ct.PixelData=ct_data[:,:,z].tostring(order='F')
         if 'PatientPosition' in current_study:
             ct.PatientPosition = current_study['PatientPosition']
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             if v != None:
                 setattr(ct, k, v)
         cts.append(ct)
@@ -1235,7 +1235,7 @@ def build_mr(mr_data, pixel_representation, voxel_size, center, current_study, *
         mr.PixelData = mr_data[:, :, z].tostring(order='F')
         if 'PatientPosition' in current_study:
             mr.PatientPosition = current_study['PatientPosition']
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             if v is not None:
                 setattr(mr, k, v)
         mrs.append(mr)
@@ -1273,7 +1273,7 @@ def build_pt(pt_data, pixel_representation, rescale_slope, voxel_size, center, c
         pt.PixelData = pt_data[:, :, z].tostring(order='F')
         if 'PatientPosition' in current_study:
             pt.PatientPosition = current_study['PatientPosition']
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             if v is not None:
                 setattr(pt, k, v)
         pts.append(pt)

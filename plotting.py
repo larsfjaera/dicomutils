@@ -7,7 +7,7 @@ Created on Wed Jan 23 09:14:42 2013
 import matplotlib.pyplot as pp
 import numpy as np
 
-import modules
+from . import modules
 
 def plot_roi_in_cp(beam, cp, roi_contour, study):
     contours = modules.get_contours_in_bld(beam, roi_contour, study)

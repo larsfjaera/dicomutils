@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from coordinates import *
+from .coordinates import *
 
 import nose
 import numpy as np

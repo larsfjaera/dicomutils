@@ -131,7 +131,7 @@ class Series(HasTraits):
     
     @on_trait_change("dicom_datasets[]")
     def update_sopinstances(self, obj, name, old, new):
-        print("Series.update_sopinstances()")
+        print "Series.update_sopinstances()"
         sopuids = defaultdict(lambda: [])
         for x in self.dicom_datasets:
             sopuids[x.SOPInstanceUID].append(x)
@@ -141,7 +141,7 @@ class Series(HasTraits):
         for uid in newuids:
             assert len(sopuids[uid]) == 1
             cls = specialsops[sopuids[uid][0].SOPClassUID]
-            print("building %s" % (cls,))
+            print "building %s" % (cls,)
             self.sopinstances.append(cls(dicom_dataset = sopuids[uid][0], series = self))
         for uid in goneuids:
             self.sopinstances.pop(sd[uid])
@@ -159,7 +159,7 @@ class Study(HasTraits):
     
     @on_trait_change("dicom_datasets[]")
     def update_series(self, obj, name, old, new):
-        print("Study.update_series()")
+        print "Study.update_series()"
         seriesuids = defaultdict(lambda: [])
         for x in self.dicom_datasets:
             seriesuids[x.SeriesInstanceUID].append(x)
@@ -189,7 +189,7 @@ class Patient(HasTraits):
 
     @on_trait_change("dicom_datasets[]")
     def update_studies(self, obj, name, old, new):
-        print("Patient.update_studies()")
+        print "Patient.update_studies()"
         studyuids = defaultdict(lambda: [])
         for x in self.dicom_datasets:
             studyuids[x.StudyInstanceUID].append(x)
@@ -277,19 +277,19 @@ for fn in sys.argv[1:]:
     try:
         dicom.read_file(fn)
         root.filenames.append(fn)
-        print("added %s" % (fn,))
+        print "added %s" % (fn,)
     except:
         continue
-print("\n".join(root.filenames))
+print "\n".join(root.filenames)
 
 patient_action = Action(name='Patient', action='handler.dump_patient(editor,object)')
 
 class TreeHandler ( Handler ):
     def dump_patient ( self, editor, object ):
-        print('dump_patient(%s)' % ( object, ))
+        print 'dump_patient(%s)' % ( object, )
 
 def on_tree_select(obj):
-    print("on_tree_select(%s)" % (obj))
+    print "on_tree_select(%s)" % (obj)
     if obj.__class__ is ControlPoint:
         root.selection.control_point = obj
         root.selection.beam = obj.beam
@@ -339,13 +339,13 @@ def on_tree_select(obj):
         root.selection.series = None
         root.selection.study = None
         root.selection.patient = None
-    print((root.selection.control_point, 
+    print (root.selection.control_point, 
            root.selection.beam, 
            root.selection.plan, 
            root.selection.series, 
            root.selection.study, 
            root.selection.patient, 
-           ))
+           )
         
 
 # Tree editor

@@ -46,3 +46,7 @@ $ ./build_dicom.py \
 ```
 
 ![Screenshot of plan with lightfield dose](https://raw.github.com/wiki/raysearchlabs/dicomutils/lightfieldplan.png)
+
+
+
+.\python.cmd "P:\Documents\- SKRIPTING\dicomutils\build_dicom.py" --patient-position HFS --values 0 --patients-name "Proton Commissioning" --patient-id "Water Phantom 40" --modality CT  --voxelsize 2,2,2 --voxels 200,200,200 --outdir "Water Phantom"

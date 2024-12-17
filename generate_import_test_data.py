@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import builders
-reload(builders)
-import modules
-reload(modules)
-from builders import StudyBuilder
+from . import builders
+import importlib
+importlib.reload(builders)
+from . import modules
+importlib.reload(modules)
+from .builders import StudyBuilder
 
 import argparse
 import os
@@ -46,7 +47,7 @@ def generate_mr_unsigned_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_mr_unsigned_not_in_short_range(out_dir, patient_id):
@@ -65,7 +66,7 @@ def generate_mr_unsigned_not_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_mr_signed_in_short_range(out_dir, patient_id):
@@ -84,7 +85,7 @@ def generate_mr_signed_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_ct_unsigned_rescaled_in_short_range(out_dir, patient_id):
@@ -105,7 +106,7 @@ def generate_ct_unsigned_rescaled_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_ct_unsigned_rescaled_not_in_short_range(out_dir, patient_id):
@@ -126,7 +127,7 @@ def generate_ct_unsigned_rescaled_not_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_ct_signed_rescaled_in_short_range(out_dir, patient_id):
@@ -147,7 +148,7 @@ def generate_ct_signed_rescaled_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_ct_signed_rescaled_not_in_short_range(out_dir, patient_id):
@@ -168,7 +169,7 @@ def generate_ct_signed_rescaled_not_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_pt_unsigned_in_short_range(out_dir, patient_id):
@@ -188,7 +189,7 @@ def generate_pt_unsigned_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_pt_unsigned_not_in_short_range(out_dir, patient_id):
@@ -208,7 +209,7 @@ def generate_pt_unsigned_not_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def generate_pt_signed_in_short_range(out_dir, patient_id):
@@ -228,13 +229,13 @@ def generate_pt_signed_in_short_range(out_dir, patient_id):
 
     mk_fresh_dir(out_dir)
     sb.write(out_dir)
-    print out_dir
+    print(out_dir)
 
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description='Create DICOM data for import testing.')
     parser.add_argument('--dciodvfy-path', dest='dciodvfy_path', default='',
-                        help='Path to dciodvfy.exe (example: C:\Users\tomhin\dicom3tools\dciodvfy.exe)')
+                        help='Path to dciodvfy.exe (example: C:\\Users\tomhin\dicom3tools\dciodvfy.exe)')
     args = parser.parse_args(args=argv)
     return args
 
@@ -245,10 +246,10 @@ def verify(dciodvfy_path, input_path):
     files = [f for f in os.listdir(input_path) if os.path.isfile(os.path.join(input_path, f))]
     assert len(files) >= 1
     try:
-        print subprocess.check_output([dciodvfy_path, os.path.join(input_path, files[0])])
+        print(subprocess.check_output([dciodvfy_path, os.path.join(input_path, files[0])]))
     except subprocess.CalledProcessError as e:
-        print "Error code: {}".format(e.returncode)
-        print "Output: {}".format(e.output)
+        print("Error code: {}".format(e.returncode))
+        print("Output: {}".format(e.output))
 
 
 def main(argv):

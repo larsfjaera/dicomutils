@@ -167,7 +167,7 @@ class StudyBuilder(object):
         if self.built:
             return self.datasets
         datasets = []
-        for modality, sbs in self.seriesbuilders.iteritems():
+        for modality, sbs in self.seriesbuilders.items():
             for sb in sbs:
                 datasets += sb.Build()
         self.built = True
@@ -177,11 +177,11 @@ class StudyBuilder(object):
     def write(self, outdir='.', print_filenames=False):
         for modality in self.modalityorder:
             for sb in self.seriesbuilders[modality]:
-                print modality, sb
+                print(modality, sb)
                 for ds in sb.build():
                     dicom.write_file(os.path.join(outdir, ds.filename), ds)
                     if print_filenames:
-                        print ds.filename
+                        print(ds.filename)
 
 
 class CTBuilder(ImageBuilder):

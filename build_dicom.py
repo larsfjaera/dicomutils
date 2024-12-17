@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import dicom
+import pydicom as dicom
 import time
 import uuid
 import sys

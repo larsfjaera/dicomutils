@@ -120,7 +120,7 @@ class Coordinates(object):
         return []
 
     def fill_out(self, transformation):
-        return transformation(**{k:v for k,v in self.__dict__.iteritems() if k in transformation.func_code.co_varnames})
+        return transformation(**{k:v for k,v in self.__dict__.items() if k in transformation.__code__.co_varnames})
 
     def get_transformation(self, from_system, to_system):
         M = np.eye(4)

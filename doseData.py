@@ -1,14 +1,15 @@
 import shutil
 import numpy
+import importlib
 try:
     shutil.rmtree("orientationtests")
 except:
     pass
-import builders
-reload(builders)
-import modules
-reload(modules)
-from builders import StudyBuilder
+from . import builders
+importlib.reload(builders)
+from . import modules
+importlib.reload(modules)
+from .builders import StudyBuilder
 
 import os
 if not os.path.exists("orientationtests"):
@@ -19,8 +20,8 @@ def build_orientation(patient_position, column_direction, row_direction, frame_o
     if frame_of_reference_uid != None:
         sb.current_study['FrameOfReferenceUID'] = frame_of_reference_uid
 
-    print "building %s..." % (patient_position,)
-    print "ct"
+    print("building %s..." % (patient_position,))
+    print("ct")
     ct = sb.build_ct(
         num_voxels=[7, 7, 7],
         voxel_size=[4, 4, 4],
@@ -36,7 +37,7 @@ def build_orientation(patient_position, column_direction, row_direction, frame_o
     ct.add_box(size = [4,4,20], center = [8,8,0], real_value = 0)
     ct.add_sphere(radius = 4, center = [-8,-8,-8], real_value = 0)
 
-    print "rtstruct"
+    print("rtstruct")
     rtstruct = sb.build_structure_set(ct)
     rtstruct.add_external_box()
     rtstruct.add_box(size = [4,4,4], center = [0,0,0], name='CenterVoxel', interpreted_type='SITE')
@@ -46,7 +47,7 @@ def build_orientation(patient_position, column_direction, row_direction, frame_o
     rtstruct.add_sphere(radius=4, center = [-8,-8,-8], name='x=y=z=-8', interpreted_type='SITE')
     rtstruct.build()
 
-    print "rtplan"
+    print("rtplan")
     rtplan = sb.build_static_plan(structure_set = rtstruct, sad=20)
     b1 = rtplan.build_beam(gantry_angle = 0, collimator_angle=30, meterset = 100)
     b1.conform_to_rectangle(4, 4, [0,0])
@@ -54,7 +55,7 @@ def build_orientation(patient_position, column_direction, row_direction, frame_o
     b2.conform_to_rectangle(4, 4, [4,4])
     rtplan.build()
 
-    print "rtdose beam 1"
+    print("rtdose beam 1")
     rtdose1 = sb.build_dose(planbuilder = rtplan)
     rtdose1.dose_grid_scaling = 1
     rtdose1.dose_summation_type = "BEAM"
@@ -69,7 +70,7 @@ def build_orientation(patient_position, column_direction, row_direction, frame_o
     rtdose1.add_box(size = [4,4,4], center = [0, 12, 0], stored_value = 0)     #0%
 
     ############# second beam
-    print "rtdose beam 2"
+    print("rtdose beam 2")
     rtdose2 = sb.build_dose(planbuilder = rtplan)
     rtdose2.dose_grid_scaling = 1
     rtdose2.dose_summation_type = "BEAM"
@@ -84,7 +85,7 @@ def build_orientation(patient_position, column_direction, row_direction, frame_o
     rtdose2.add_box(size = [4,4,4], center = [12, 0, 0], stored_value = 15728) # 24%
 
     ############# second plan
-    print "rtdose plan dose"
+    print("rtdose plan dose")
     rtdosePlan = sb.build_dose(planbuilder = rtplan)
     rtdosePlan.dose_grid_scaling = 1
     rtdosePlan.dose_summation_type = "PLAN"

@@ -1,8 +1,9 @@
-import builders
-reload(builders)
-import modules
-reload(modules)
-from builders import StudyBuilder
+from . import builders
+import importlib
+importlib.reload(builders)
+from . import modules
+importlib.reload(modules)
+from .builders import StudyBuilder
 import matplotlib.pyplot as pp
 
 import os
@@ -18,11 +19,11 @@ ct = sb.build_ct(
     rescale_slope=1,
     rescale_intercept=-1024)
 ct.clear(real_value = 0)
-print ct.pixel_array.max(),ct.pixel_array.min()
+print(ct.pixel_array.max(),ct.pixel_array.min())
 ct.add_sphere(radius = 25, center = [0,0,0], real_value = -1000, mode = 'set')
-print ct.pixel_array.max(),ct.pixel_array.min()
+print(ct.pixel_array.max(),ct.pixel_array.min())
 ct.add_box(size = [25,50,25], center = [0,0,0], stored_value = 300, mode = 'add')
-print ct.pixel_array.max(),ct.pixel_array.min()
+print(ct.pixel_array.max(),ct.pixel_array.min())
 
 assert sb.seriesbuilders['CT'] == [ct]
 
@@ -42,9 +43,9 @@ modules.conform_mlc_to_roi(b1.rtbeam, sph2.roi_contour, sb.current_study)
 b1.finalize_mlc()
 
 sb.write(tmpdir)
-print tmpdir
+print(tmpdir)
 
-import plotting as p
+from . import plotting as p
 
 p.plot_cp(rtplan.datasets[0].Beams[0], rtplan.datasets[0].Beams[0].CPs[0])
 p.plot_roi_in_cp(rtplan.datasets[0].Beams[0], rtplan.datasets[0].Beams[0].CPs[0], sph.roi_contour, sb.current_study)
